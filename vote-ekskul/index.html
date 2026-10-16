@@ -1,1 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilihan Ketua Ekskul Komputer</title>
+    <!-- Menghubungkan file CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+    <div class="container">
+        <h1>Pemilu Ekskul Komputer 2026</h1>
+        
+        <!-- AREA 1: Form Login Token -->
+        <div id="login-section">
+            <p>Silakan masukkan Nama dan Token yang diberikan panitia.</p>
+            <input type="text" id="input-nama" placeholder="Nama Lengkap" required>
+            <input type="text" id="input-token" placeholder="Kode Token" required>
+            <button id="btn-login">Masuk & Mulai Vote</button>
+            <p id="login-error" class="error-msg hidden"></p>
+        </div>
+
+        <!-- AREA 2: Daftar Paslon (Awalnya disembunyikan) -->
+        <div id="vote-section" class="hidden">
+            <h2 id="welcome-msg">Selamat datang, Peserta!</h2>
+            <p>Silakan pilih calon ketua ekskul komputer:</p>
+            
+            <div class="candidate-list">
+                <button class="btn-vote" data-paslon="paslon-1">Pilih Paslon 1</button>
+                <button class="btn-vote" data-paslon="paslon-2">Pilih Paslon 2</button>
+                <button class="btn-vote" data-paslon="paslon-3">Pilih Paslon 3</button>
+            </div>
+
+            <button id="btn-logout" class="btn-danger">Keluar</button>
+        </div>
+    </div>
+
+    <!-- Menghubungkan file Javascript (Pastikan type="module" karena kita pakai Firebase terbaru) -->
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/voter.js"></script>
+</body>
+</html>
