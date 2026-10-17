@@ -1,6 +1,5 @@
-import { collection, onSnapshot, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 import { db } from './firebase.js';
-import { collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+import { collection, onSnapshot, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
 const loginAdminArea = document.getElementById('login-admin');
 const dashboardAdminArea = document.getElementById('dashboard-admin');
@@ -9,7 +8,9 @@ const btnLoginAdmin = document.getElementById('btn-login-admin');
 const btnLogoutAdmin = document.getElementById('btn-logout-admin');
 const errorKey = document.getElementById('error-key');
 
-// LOGIKA BUKA KUNCI
+// ==========================================
+// LOGIKA LOGIN ADMIN
+// ==========================================
 btnLoginAdmin.addEventListener('click', async () => {
     const keyMasuk = inputKey.value.trim();
     
@@ -24,7 +25,7 @@ btnLoginAdmin.addEventListener('click', async () => {
         btnLoginAdmin.disabled = true;
         errorKey.classList.add('hidden');
 
-        // Minta data kunci ke Firestore
+        // Tarik kunci dari Firestore
         const docRef = doc(db, "settings", "config");
         const docSnap = await getDoc(docRef);
 
@@ -32,13 +33,12 @@ btnLoginAdmin.addEventListener('click', async () => {
             const adminKeyFirebase = docSnap.data().adminKey; 
 
             if (keyMasuk === adminKeyFirebase) {
-                // KUNCI BENAR
+                // BERHASIL MASUK
                 loginAdminArea.classList.add('hidden');
                 dashboardAdminArea.classList.remove('hidden');
                 inputKey.value = ""; 
-                mulaiTarikData(); 
+                mulaiTarikData(); // Panggil fungsi grafik
             } else {
-                // KUNCI SALAH
                 errorKey.innerText = "Kunci yang kamu masukkan salah!";
                 errorKey.classList.remove('hidden');
             }
@@ -46,7 +46,6 @@ btnLoginAdmin.addEventListener('click', async () => {
             errorKey.innerText = "Error: Pengaturan kunci belum dibuat di Firebase!";
             errorKey.classList.remove('hidden');
         }
-
     } catch (error) {
         console.error("Gagal login:", error);
         errorKey.innerText = "Gagal terhubung ke database. Cek koneksi internet.";
@@ -57,13 +56,64 @@ btnLoginAdmin.addEventListener('click', async () => {
     }
 });
 
-// LOGIKA KUNCI KEMBALI
+// ==========================================
+// LOGIKA LOGOUT
+// ==========================================
 btnLogoutAdmin.addEventListener('click', () => {
     dashboardAdminArea.classList.add('hidden');
     loginAdminArea.classList.remove('hidden');
 });
 
+// ==========================================
+// LOGIKA UPLOAD MASSAL TOKEN
+// ==========================================
+const inputMassal = document.getElementById('input-massal');
+const btnUploadToken = document.getElementById('btn-upload-token');
+const uploadStatus = document.getElementById('upload-status');
+
+if (btnUploadToken) {
+    btnUploadToken.addEventListener('click', async () => {
+        const teks = inputMassal.value.trim();
+        if (!teks) {
+            uploadStatus.innerText = "Kotak teks masih kosong! Silakan paste token dari Excel.";
+            uploadStatus.style.color = "#dc3545";
+            return;
+        }
+
+        const daftarToken = teks.split('\n').map(t => t.trim()).filter(t => t !== "");
+        const yakin = confirm(`Ditemukan ${daftarToken.length} token. Yakin ingin mengunggahnya ke database?`);
+        if (!yakin) return;
+
+        btnUploadToken.innerText = "Mengunggah... ⏳";
+        btnUploadToken.disabled = true;
+        uploadStatus.innerText = "";
+
+        try {
+            let berhasil = 0;
+            for (const token of daftarToken) {
+                await addDoc(collection(db, "tokens"), {
+                    kode: token,
+                    isUsed: false
+                });
+                berhasil++;
+            }
+            uploadStatus.innerText = `Sukses! ${berhasil} token berhasil dimasukkan ke database.`;
+            uploadStatus.style.color = "#28a745";
+            inputMassal.value = ""; 
+        } catch (error) {
+            console.error("Gagal upload token:", error);
+            uploadStatus.innerText = "Terjadi kesalahan sistem saat mengunggah token.";
+            uploadStatus.style.color = "#dc3545";
+        } finally {
+            btnUploadToken.innerText = "Upload Semua Token";
+            btnUploadToken.disabled = false;
+        }
+    });
+}
+
+// ==========================================
 // LOGIKA GRAFIK CHART.JS
+// ==========================================
 const ctx = document.getElementById('voteChart').getContext('2d');
 let voteChart = new Chart(ctx, {
     type: 'pie',
@@ -84,7 +134,6 @@ const totalSuaraDisplay = document.getElementById('total-suara');
 function mulaiTarikData() {
     onSnapshot(collection(db, "votes"), (snapshot) => {
         let suara1 = 0, suara2 = 0, suara3 = 0;
-        
         snapshot.forEach((doc) => {
             const data = doc.data();
             if (data.paslon === "1") suara1++;
@@ -92,63 +141,8 @@ function mulaiTarikData() {
             if (data.paslon === "3") suara3++;
         });
 
-        const total = suara1 + suara2 + suara3;
-        totalSuaraDisplay.innerText = total;
-
+        totalSuaraDisplay.innerText = (suara1 + suara2 + suara3);
         voteChart.data.datasets[0].data = [suara1, suara2, suara3];
         voteChart.update();
-    });
-}
-// ==========================================
-// LOGIKA UPLOAD TOKEN MASSAL (DARI EXCEL)
-// ==========================================
-const inputMassal = document.getElementById('input-massal');
-const btnUploadToken = document.getElementById('btn-upload-token');
-const uploadStatus = document.getElementById('upload-status');
-
-// Pastikan tombol ini hanya aktif setelah elemennya tersedia di HTML
-if (btnUploadToken) {
-    btnUploadToken.addEventListener('click', async () => {
-        const teks = inputMassal.value.trim();
-        
-        if (!teks) {
-            uploadStatus.innerText = "Kotak teks masih kosong! Silakan paste token dari Excel.";
-            uploadStatus.style.color = "#dc3545"; // Merah
-            return;
-        }
-
-        // Pisahkan teks berdasarkan baris baru (enter)
-        const daftarToken = teks.split('\n').map(t => t.trim()).filter(t => t !== "");
-
-        const yakin = confirm(`Ditemukan ${daftarToken.length} token. Yakin ingin mengunggahnya ke database?`);
-        if (!yakin) return;
-
-        btnUploadToken.innerText = "Mengunggah... ⏳";
-        btnUploadToken.disabled = true;
-        uploadStatus.innerText = "";
-
-        try {
-            let berhasil = 0;
-            // Looping untuk menyimpan setiap token ke Firebase
-            for (const token of daftarToken) {
-                await addDoc(collection(db, "tokens"), {
-                    kode: token,
-                    isUsed: false
-                });
-                berhasil++;
-            }
-            
-            uploadStatus.innerText = `Sukses! ${berhasil} token berhasil dimasukkan ke database.`;
-            uploadStatus.style.color = "#28a745"; // Hijau
-            inputMassal.value = ""; // Kosongkan kotak setelah berhasil
-
-        } catch (error) {
-            console.error("Gagal upload token:", error);
-            uploadStatus.innerText = "Terjadi kesalahan sistem saat mengunggah token.";
-            uploadStatus.style.color = "#dc3545"; // Merah
-        } finally {
-            btnUploadToken.innerText = "Upload Semua Token ke Database";
-            btnUploadToken.disabled = false;
-        }
     });
 }
