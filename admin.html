@@ -49,6 +49,16 @@
         </div>
 
         <h3 style="color: #333; margin-bottom: 15px;">Perolehan Suara Sementara</h3>
+        <!-- FITUR UPLOAD TOKEN MASSAL -->
+    <div class="stat-box" style="flex-direction: column; align-items: center;">
+        <h3 style="margin-bottom: 10px; color: #333;">Upload 79 Token Siswa</h3>
+        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Copy-paste daftar token dari Excel ke kotak di bawah ini (1 baris untuk 1 token):</p>
+        
+        <textarea id="input-massal" rows="6" placeholder="TOKEN01&#10;TOKEN02&#10;TOKEN03..." style="width: 100%; max-width: 400px; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-family: monospace; resize: vertical;"></textarea>
+        
+        <button id="btn-upload-token" style="background: #17a2b8; max-width: 400px;">Upload Semua Token ke Database</button>
+        <p id="upload-status" style="margin-top: 15px; font-weight: bold; font-size: 15px;"></p>
+    </div>
         <div class="chart-container">
             <canvas id="voteChart"></canvas>
         </div>
