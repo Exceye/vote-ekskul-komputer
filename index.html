@@ -22,22 +22,36 @@
             <button id="btn-login">Masuk & Mulai Vote</button>
             <p id="login-error" class="error-msg hidden"></p>
         </div>
-
-        <!-- Area Voting (Disembunyikan di awal) -->
+<!-- Area Voting (Disembunyikan di awal) -->
         <div id="vote-section" class="hidden">
             <h2 id="welcome-msg">Selamat datang!</h2>
-            <p style="margin-bottom: 15px;">Silakan pilih calon ketua ekskul:</p>
             
-            <div class="candidate-list">
-                <button class="btn-vote" data-paslon="1">1. Paslon Satu</button>
-                <button class="btn-vote" data-paslon="2">2. Paslon Dua</button>
-                <button class="btn-vote" data-paslon="3">3. Paslon Tiga</button>
+            <!-- Layar Utama Penampil Paslon -->
+            <div class="paslon-card">
+                <div class="paslon-info">
+                    <h3 id="display-nama">Paslon 1</h3>
+                    <p id="display-visimisi"><strong>Visi & Misi:</strong><br>Memfokuskan ekskul pada fundamental web development (HTML, CSS, JS) serta eksplorasi UI/UX responsif.</p>
+                </div>
+                
+                <!-- Foto di Tengah -->
+                <img id="display-foto" src="assets/paslon1.png" alt="Foto Paslon" class="foto-paslon">
+                
+                <button id="btn-vote-main" class="btn-vote-action" data-paslon="1">VOTE PASLON 1</button>
             </div>
 
-            <button id="btn-logout" class="btn-danger">Keluar</button>
-        </div>
-    </div>
+            <!-- Kotak Pilihan Bawah -->
+            <div class="bottom-selector">
+                <p>Pilih kotak di bawah untuk melihat detail calon lain:</p>
+                <div class="box-container">
+                    <div class="box active" data-target="1">1</div>
+                    <div class="box" data-target="2">2</div>
+                    <div class="box" data-target="3">3</div>
+                </div>
+            </div>
 
+            <button id="btn-logout" class="btn-danger">Keluar / Ganti Akun</button>
+        </div>
+     
     <!-- Script -->
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/voter.js"></script>
