@@ -1,55 +1,92 @@
+/* Reset CSS agar rapi di semua browser */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e9ecef; /* Warna abu-abu yang lebih lembut */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Ubah 'height' menjadi 'min-height' agar halaman bisa di-scroll jika kepanjangan */
-    margin: 0;
-    padding: 20px; /* Tambahkan padding agar kotak tidak menabrak ujung layar */
-    box-sizing: border-box;
+    min-height: 100vh;
+    padding: 20px;
 }
+
+/* Kotak Utama */
 .container {
-    background-color: transparent; /* Mengubah kotak putih menjadi transparan */
-    box-shadow: none; /* Menghilangkan efek bayangan kotak */
-    padding: 30px;
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08); /* Efek bayangan lebih halus dan elegan */
     text-align: center;
     width: 100%;
     max-width: 400px;
+    position: relative; /* Mengunci elemen di dalamnya */
 }
 
-input {
-    width: 90%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+/* Logo */
+.logo {
+    width: 130px;
+    height: auto;
+    margin-bottom: 15px;
 }
-button {
+
+/* Teks */
+h1 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* Input Form */
+input {
     width: 100%;
     padding: 12px;
-    margin: 10px 0;
+    margin-bottom: 15px;
+    border: 1px solid #ccd0d5;
+    border-radius: 6px;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.3); /* Efek nyala hijau saat diklik */
+}
+
+/* Tombol */
+button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     background-color: #28a745;
     color: white;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
 }
+
 button:hover { background-color: #218838; }
-.btn-vote { background-color: #007bff; margin: 5px 0; }
+
+.btn-vote { background-color: #007bff; margin-bottom: 8px;}
 .btn-vote:hover { background-color: #0056b3; }
+
 .btn-danger { background-color: #dc3545; margin-top: 20px; }
 .btn-danger:hover { background-color: #c82333; }
-.hidden { display: none !important; }
-.error-msg { color: red; font-size: 14px; margin-top: 10px; }
 
-/* Pengaturan untuk Logo */
-.logo {
-    width: 120px; /* Sesuaikan angka ini (misal 100px atau 120px) jika logonya masih kebesaran/kekecilan */
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-}
+/* Status / Utilities */
+.hidden { display: none !important; }
+.error-msg { color: #dc3545; font-size: 14px; font-weight: bold; }
