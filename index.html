@@ -7,11 +7,12 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    
     <div class="container">
-        <div class="container">
-        <!-- Tambahkan baris img ini di atas tag h1 -->
+        <!-- Logo -->
         <img src="assets/logo.png" alt="Logo Ekskul Komputer" class="logo">
-        <h1>Pemilu Ekskul Komputer 2026</h1>
+        
+        <h1>Pemilu Ekskul 2026</h1>
         
         <!-- Form Login -->
         <div id="login-section">
@@ -25,7 +26,7 @@
         <!-- Area Voting (Disembunyikan di awal) -->
         <div id="vote-section" class="hidden">
             <h2 id="welcome-msg">Selamat datang!</h2>
-            <p>Silakan pilih calon ketua ekskul:</p>
+            <p style="margin-bottom: 15px;">Silakan pilih calon ketua ekskul:</p>
             
             <div class="candidate-list">
                 <button class="btn-vote" data-paslon="1">1. Paslon Satu</button>
@@ -37,7 +38,7 @@
         </div>
     </div>
 
-    <!-- Script Firebase & Logika -->
+    <!-- Script -->
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/voter.js"></script>
 </body>
