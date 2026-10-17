@@ -1,3 +1,4 @@
+import { collection, onSnapshot, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 import { db } from './firebase.js';
 import { collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
@@ -96,5 +97,58 @@ function mulaiTarikData() {
 
         voteChart.data.datasets[0].data = [suara1, suara2, suara3];
         voteChart.update();
+    });
+}
+// ==========================================
+// LOGIKA UPLOAD TOKEN MASSAL (DARI EXCEL)
+// ==========================================
+const inputMassal = document.getElementById('input-massal');
+const btnUploadToken = document.getElementById('btn-upload-token');
+const uploadStatus = document.getElementById('upload-status');
+
+// Pastikan tombol ini hanya aktif setelah elemennya tersedia di HTML
+if (btnUploadToken) {
+    btnUploadToken.addEventListener('click', async () => {
+        const teks = inputMassal.value.trim();
+        
+        if (!teks) {
+            uploadStatus.innerText = "Kotak teks masih kosong! Silakan paste token dari Excel.";
+            uploadStatus.style.color = "#dc3545"; // Merah
+            return;
+        }
+
+        // Pisahkan teks berdasarkan baris baru (enter)
+        const daftarToken = teks.split('\n').map(t => t.trim()).filter(t => t !== "");
+
+        const yakin = confirm(`Ditemukan ${daftarToken.length} token. Yakin ingin mengunggahnya ke database?`);
+        if (!yakin) return;
+
+        btnUploadToken.innerText = "Mengunggah... ⏳";
+        btnUploadToken.disabled = true;
+        uploadStatus.innerText = "";
+
+        try {
+            let berhasil = 0;
+            // Looping untuk menyimpan setiap token ke Firebase
+            for (const token of daftarToken) {
+                await addDoc(collection(db, "tokens"), {
+                    kode: token,
+                    isUsed: false
+                });
+                berhasil++;
+            }
+            
+            uploadStatus.innerText = `Sukses! ${berhasil} token berhasil dimasukkan ke database.`;
+            uploadStatus.style.color = "#28a745"; // Hijau
+            inputMassal.value = ""; // Kosongkan kotak setelah berhasil
+
+        } catch (error) {
+            console.error("Gagal upload token:", error);
+            uploadStatus.innerText = "Terjadi kesalahan sistem saat mengunggah token.";
+            uploadStatus.style.color = "#dc3545"; // Merah
+        } finally {
+            btnUploadToken.innerText = "Upload Semua Token ke Database";
+            btnUploadToken.disabled = false;
+        }
     });
 }
