@@ -48,7 +48,7 @@ button:hover { background-color: #218838; }
 
 /* Pengaturan untuk Logo */
 .logo {
-    width: 150px; /* Sesuaikan angka ini (misal 100px atau 120px) jika logonya masih kebesaran/kekecilan */
+    width: 120px; /* Sesuaikan angka ini (misal 100px atau 120px) jika logonya masih kebesaran/kekecilan */
     max-width: 100%;
     height: auto;
     margin-bottom: 20px;
