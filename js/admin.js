@@ -1,16 +1,80 @@
 import { db } from './firebase.js';
-// Kita gunakan onSnapshot untuk Live Data
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+// Tambahkan fungsi doc dan getDoc untuk membaca kunci dari database
+import { collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
-// Siapkan Grafik menggunakan Chart.js
+const loginAdminArea = document.getElementById('login-admin');
+const dashboardAdminArea = document.getElementById('dashboard-admin');
+const inputKey = document.getElementById('input-key');
+const btnLoginAdmin = document.getElementById('btn-login-admin');
+const btnLogoutAdmin = document.getElementById('btn-logout-admin');
+const errorKey = document.getElementById('error-key');
+
+// LOGIKA BUKA KUNCI DENGAN FIREBASE
+btnLoginAdmin.addEventListener('click', async () => {
+    const keyMasuk = inputKey.value.trim();
+    
+    if (!keyMasuk) {
+        errorKey.innerText = "Kunci rahasia tidak boleh kosong!";
+        errorKey.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        // Efek loading tombol
+        btnLoginAdmin.innerText = "Memeriksa Sandi...";
+        btnLoginAdmin.disabled = true;
+        errorKey.classList.add('hidden');
+
+        // Minta data kunci rahasia ke Firestore (Koleksi 'settings', Dokumen 'config')
+        const docRef = doc(db, "settings", "config");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const adminKeyFirebase = docSnap.data().adminKey; // Ambil nilai kunci dari database
+
+            if (keyMasuk === adminKeyFirebase) {
+                // KUNCI BENAR!
+                loginAdminArea.classList.add('hidden');
+                dashboardAdminArea.classList.remove('hidden');
+                inputKey.value = ""; 
+                mulaiTarikData(); // Mulai jalankan grafik
+            } else {
+                // KUNCI SALAH
+                errorKey.innerText = "Kunci yang kamu masukkan salah!";
+                errorKey.classList.remove('hidden');
+            }
+        } else {
+            errorKey.innerText = "Sistem error: Pengaturan kunci belum dibuat di Firebase!";
+            errorKey.classList.remove('hidden');
+        }
+
+    } catch (error) {
+        console.error("Gagal login admin:", error);
+        errorKey.innerText = "Gagal terhubung ke database. Cek koneksi internet.";
+        errorKey.classList.remove('hidden');
+    } finally {
+        btnLoginAdmin.innerText = "Buka Dashboard";
+        btnLoginAdmin.disabled = false;
+    }
+});
+
+// LOGIKA KUNCI KEMBALI (LOGOUT)
+btnLogoutAdmin.addEventListener('click', () => {
+    dashboardAdminArea.classList.add('hidden');
+    loginAdminArea.classList.remove('hidden');
+});
+
+// ==========================================
+// LOGIKA GRAFIK CHART.JS & FIREBASE
+// ==========================================
 const ctx = document.getElementById('voteChart').getContext('2d');
 let voteChart = new Chart(ctx, {
-    type: 'pie', // Tipe grafik lingkaran
+    type: 'pie',
     data: {
         labels: ['Paslon 1', 'Paslon 2', 'Paslon 3'],
         datasets: [{
             label: 'Jumlah Suara',
-            data: [0, 0, 0], // Data awal
+            data: [0, 0, 0],
             backgroundColor: ['#007bff', '#28a745', '#dc3545'],
             borderWidth: 1
         }]
@@ -20,22 +84,21 @@ let voteChart = new Chart(ctx, {
 
 const totalSuaraDisplay = document.getElementById('total-suara');
 
-// Tarik data secara REALTIME dari koleksi 'votes'
-onSnapshot(collection(db, "votes"), (snapshot) => {
-    let suara1 = 0, suara2 = 0, suara3 = 0;
-    
-    snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.paslon === "1") suara1++;
-        if (data.paslon === "2") suara2++;
-        if (data.paslon === "3") suara3++;
+function mulaiTarikData() {
+    onSnapshot(collection(db, "votes"), (snapshot) => {
+        let suara1 = 0, suara2 = 0, suara3 = 0;
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.paslon === "1") suara1++;
+            if (data.paslon === "2") suara2++;
+            if (data.paslon === "3") suara3++;
+        });
+
+        const total = suara1 + suara2 + suara3;
+        totalSuaraDisplay.innerText = total;
+
+        voteChart.data.datasets[0].data = [suara1, suara2, suara3];
+        voteChart.update();
     });
-
-    // Update total suara
-    const total = suara1 + suara2 + suara3;
-    totalSuaraDisplay.innerText = total;
-
-    // Update data grafik
-    voteChart.data.datasets[0].data = [suara1, suara2, suara3];
-    voteChart.update(); // Minta grafik menggambar ulang
-});
+}
