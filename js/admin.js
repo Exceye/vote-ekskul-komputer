@@ -1,5 +1,4 @@
 import { db } from './firebase.js';
-// Tambahkan fungsi doc dan getDoc untuk membaca kunci dari database
 import { collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
 const loginAdminArea = document.getElementById('login-admin');
@@ -9,7 +8,7 @@ const btnLoginAdmin = document.getElementById('btn-login-admin');
 const btnLogoutAdmin = document.getElementById('btn-logout-admin');
 const errorKey = document.getElementById('error-key');
 
-// LOGIKA BUKA KUNCI DENGAN FIREBASE
+// LOGIKA BUKA KUNCI
 btnLoginAdmin.addEventListener('click', async () => {
     const keyMasuk = inputKey.value.trim();
     
@@ -20,36 +19,35 @@ btnLoginAdmin.addEventListener('click', async () => {
     }
 
     try {
-        // Efek loading tombol
         btnLoginAdmin.innerText = "Memeriksa Sandi...";
         btnLoginAdmin.disabled = true;
         errorKey.classList.add('hidden');
 
-        // Minta data kunci rahasia ke Firestore (Koleksi 'settings', Dokumen 'config')
+        // Minta data kunci ke Firestore
         const docRef = doc(db, "settings", "config");
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            const adminKeyFirebase = docSnap.data().adminKey; // Ambil nilai kunci dari database
+            const adminKeyFirebase = docSnap.data().adminKey; 
 
             if (keyMasuk === adminKeyFirebase) {
-                // KUNCI BENAR!
+                // KUNCI BENAR
                 loginAdminArea.classList.add('hidden');
                 dashboardAdminArea.classList.remove('hidden');
                 inputKey.value = ""; 
-                mulaiTarikData(); // Mulai jalankan grafik
+                mulaiTarikData(); 
             } else {
                 // KUNCI SALAH
                 errorKey.innerText = "Kunci yang kamu masukkan salah!";
                 errorKey.classList.remove('hidden');
             }
         } else {
-            errorKey.innerText = "Sistem error: Pengaturan kunci belum dibuat di Firebase!";
+            errorKey.innerText = "Error: Pengaturan kunci belum dibuat di Firebase!";
             errorKey.classList.remove('hidden');
         }
 
     } catch (error) {
-        console.error("Gagal login admin:", error);
+        console.error("Gagal login:", error);
         errorKey.innerText = "Gagal terhubung ke database. Cek koneksi internet.";
         errorKey.classList.remove('hidden');
     } finally {
@@ -58,15 +56,13 @@ btnLoginAdmin.addEventListener('click', async () => {
     }
 });
 
-// LOGIKA KUNCI KEMBALI (LOGOUT)
+// LOGIKA KUNCI KEMBALI
 btnLogoutAdmin.addEventListener('click', () => {
     dashboardAdminArea.classList.add('hidden');
     loginAdminArea.classList.remove('hidden');
 });
 
-// ==========================================
-// LOGIKA GRAFIK CHART.JS & FIREBASE
-// ==========================================
+// LOGIKA GRAFIK CHART.JS
 const ctx = document.getElementById('voteChart').getContext('2d');
 let voteChart = new Chart(ctx, {
     type: 'pie',
