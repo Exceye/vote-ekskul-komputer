@@ -73,3 +73,91 @@ btnLogin.addEventListener('click', async () => {
         btnLogin.disabled = false;
     }
 });
+
+//PERUBAHAN
+// --- 4. LOGIKA TAMPILAN KARTU PASLON ---
+
+// Database lokal untuk teks dan foto
+const dataPaslon = {
+    "1": {
+        nama: "Paslon 1: Nama Ketua & Wakil",
+        visimisi: "Memfokuskan ekskul pada fundamental web development (HTML, CSS, JS) serta eksplorasi UI/UX responsif.",
+        foto: "assets/paslon1.png"
+    },
+    "2": {
+        nama: "Paslon 2: Nama Ketua & Wakil",
+        visimisi: "Membentuk divisi khusus pembuatan game 2D berbasis browser, lengkap dengan mekanik dan audio visual efek.",
+        foto: "assets/paslon2.png"
+    },
+    "3": {
+        nama: "Paslon 3: Nama Ketua & Wakil",
+        visimisi: "Menyelenggarakan program bootcamp intensif dan memfasilitasi kolaborasi proyek tim menggunakan GitHub.",
+        foto: "assets/paslon3.png"
+    }
+};
+
+// Ambil elemen-elemen UI
+const boxes = document.querySelectorAll('.box');
+const displayNama = document.getElementById('display-nama');
+const displayVisiMisi = document.getElementById('display-visimisi');
+const displayFoto = document.getElementById('display-foto');
+const btnVoteMain = document.getElementById('btn-vote-main');
+
+// Fungsi saat kotak pilihan dipencet
+boxes.forEach(box => {
+    box.addEventListener('click', (e) => {
+        // Hapus warna biru dari semua kotak
+        boxes.forEach(b => b.classList.remove('active'));
+        // Tambahkan warna biru ke kotak yang sedang diklik
+        e.target.classList.add('active');
+
+        // Ambil nomor paslon dari kotak
+        const targetId = e.target.getAttribute('data-target');
+        const paslon = dataPaslon[targetId];
+
+        // Ubah isi layar utama sesuai nomor paslon
+        displayNama.innerText = paslon.nama;
+        displayVisiMisi.innerHTML = `<strong>Visi & Misi:</strong><br>${paslon.visimisi}`;
+        displayFoto.src = paslon.foto;
+        
+        // Ubah target tombol VOTE
+        btnVoteMain.innerText = `VOTE PASLON ${targetId}`;
+        btnVoteMain.setAttribute('data-paslon', targetId);
+    });
+});
+
+// Perbarui logika klik tombol VOTE UTAMA
+// (Gantikan kode btnVotes.forEach lama dengan ini)
+btnVoteMain.addEventListener('click', async (e) => {
+    const paslonPilihan = e.target.getAttribute('data-paslon');
+    const tokenId = sessionStorage.getItem('tokenId');
+
+    const yakin = confirm(`Kamu yakin ingin memberikan suara untuk Paslon ${paslonPilihan}?`);
+    if (!yakin) return;
+
+    try {
+        document.querySelector('.paslon-card').innerHTML = `<h3 style="color: #007bff; padding: 40px 0;">Memproses suara... ⏳</h3>`;
+        document.querySelector('.bottom-selector').classList.add('hidden');
+        document.getElementById('btn-logout').classList.add('hidden');
+
+        // Simpan ke database
+        await addDoc(collection(db, "votes"), {
+            paslon: paslonPilihan,
+            waktu: serverTimestamp()
+        });
+
+        // Matikan token
+        const tokenRef = doc(db, "tokens", tokenId);
+        await updateDoc(tokenRef, { isUsed: true });
+
+        setTimeout(() => {
+            alert("Terima kasih! Suaramu berhasil direkam.");
+            sessionStorage.clear();
+            window.location.reload(); 
+        }, 3000);
+
+    } catch (error) {
+        console.error("Gagal mengirim suara:", error);
+        alert("Terjadi kesalahan sistem. Coba lagi.");
+    }
+});
