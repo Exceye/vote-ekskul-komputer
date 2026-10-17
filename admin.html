@@ -4,20 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Pemilu Ekskul</title>
-    <!-- Kita pakai Chart.js untuk membuat grafik lingkaran (Pie Chart) yang keren -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial; padding: 20px; background: #f4f7f6; text-align: center; }
-        .dashboard { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background: #e9ecef; text-align: center; }
+        .dashboard { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .chart-container { width: 100%; max-width: 400px; margin: auto; }
-        h1 { color: #333; }
-        .stat-box { display: flex; justify-content: space-around; margin: 20px 0; padding: 15px; background: #e9ecef; border-radius: 8px; }
-        .stat-item h2 { margin: 0; color: #007bff; font-size: 30px; }
-        .stat-item p { margin: 5px 0 0; font-size: 14px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        
+        .stat-box { display: flex; justify-content: space-around; margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6; }
+        .stat-item h2 { margin: 0; color: #007bff; font-size: 36px; }
+        .stat-item p { margin: 5px 0 0; font-size: 15px; color: #555; }
+        
+        input { padding: 12px; width: 100%; max-width: 300px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; text-align: center; }
+        input:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
+        button { padding: 12px 25px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #218838; }
+        
+        .hidden { display: none !important; }
+        .error { color: #dc3545; font-size: 14px; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="dashboard">
+
+    <!-- KOTAK LOGIN ADMIN -->
+    <div id="login-admin" class="dashboard">
+        <h1>Keamanan Admin</h1>
+        <p style="margin-bottom: 20px; color: #666;">Masukkan kunci rahasia panitia untuk melihat hasil.</p>
+        
+        <input type="password" id="input-key" placeholder="Kunci Rahasia">
+        <br>
+        <button id="btn-login-admin">Buka Dashboard</button>
+        <p id="error-key" class="error hidden">Kunci yang kamu masukkan salah!</p>
+    </div>
+
+    <!-- DASHBOARD GRAFIK (Disembunyikan di awal) -->
+    <div id="dashboard-admin" class="dashboard hidden">
         <h1>Dashboard Admin Pemilu</h1>
         
         <div class="stat-box">
@@ -25,14 +46,14 @@
                 <h2 id="total-suara">0</h2>
                 <p>Total Suara Masuk</p>
             </div>
-            <!-- Nanti kita bisa tambah tombol Generate Token di sini -->
         </div>
 
-        <h3>Perolehan Suara Sementara</h3>
+        <h3 style="color: #333; margin-bottom: 15px;">Perolehan Suara Sementara</h3>
         <div class="chart-container">
-            <!-- Tempat Grafik akan muncul -->
             <canvas id="voteChart"></canvas>
         </div>
+        
+        <button id="btn-logout-admin" style="background: #dc3545; margin-top: 30px;">Kunci Kembali Halaman</button>
     </div>
 
     <script type="module" src="js/firebase.js"></script>
