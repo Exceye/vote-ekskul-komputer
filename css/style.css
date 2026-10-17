@@ -43,3 +43,10 @@ button:hover { background-color: #218838; }
 .btn-danger:hover { background-color: #c82333; }
 .hidden { display: none !important; }
 .error-msg { color: red; font-size: 14px; margin-top: 10px; }
+
+/* Pengaturan untuk Logo */
+.logo {
+    width: 120px; /* Kamu bisa mengubah angka ini jika logo kurang besar/kecil */
+    height: auto;
+    margin-bottom: 10px; /* Memberi jarak antara logo dan teks judul */
+}
