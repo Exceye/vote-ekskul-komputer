@@ -15,9 +15,10 @@
         .stat-item h2 { margin: 0; color: #007bff; font-size: 36px; }
         .stat-item p { margin: 5px 0 0; font-size: 15px; color: #555; }
         
-        input { padding: 12px; width: 100%; max-width: 300px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; text-align: center; }
-        input:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
-        button { padding: 12px 25px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        input, textarea { padding: 12px; width: 100%; max-width: 300px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; outline: none; }
+        input { text-align: center; }
+        input:focus, textarea:focus { border-color: #007bff; box-shadow: 0 0 5px rgba(0,123,255,0.3); }
+        button { padding: 12px 25px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; width: 100%; max-width: 300px;}
         button:hover { background: #218838; }
         
         .hidden { display: none !important; }
@@ -26,7 +27,7 @@
 </head>
 <body>
 
-    <!-- KOTAK LOGIN ADMIN -->
+    <!-- 1. KOTAK LOGIN ADMIN -->
     <div id="login-admin" class="dashboard">
         <h1>Keamanan Admin</h1>
         <p style="margin-bottom: 20px; color: #666;">Masukkan kunci rahasia panitia untuk melihat hasil.</p>
@@ -34,10 +35,10 @@
         <input type="password" id="input-key" placeholder="Kunci Rahasia">
         <br>
         <button id="btn-login-admin">Buka Dashboard</button>
-        <p id="error-key" class="error hidden">Kunci yang kamu masukkan salah!</p>
+        <p id="error-key" class="error hidden"></p>
     </div>
 
-    <!-- DASHBOARD GRAFIK (Disembunyikan di awal) -->
+    <!-- 2. DASHBOARD GRAFIK & UPLOAD -->
     <div id="dashboard-admin" class="dashboard hidden">
         <h1>Dashboard Admin Pemilu</h1>
         
@@ -48,17 +49,16 @@
             </div>
         </div>
 
-        <h3 style="color: #333; margin-bottom: 15px;">Perolehan Suara Sementara</h3>
         <!-- FITUR UPLOAD TOKEN MASSAL -->
-    <div class="stat-box" style="flex-direction: column; align-items: center;">
-        <h3 style="margin-bottom: 10px; color: #333;">Upload 79 Token Siswa</h3>
-        <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Copy-paste daftar token dari Excel ke kotak di bawah ini (1 baris untuk 1 token):</p>
-        
-        <textarea id="input-massal" rows="6" placeholder="TOKEN01&#10;TOKEN02&#10;TOKEN03..." style="width: 100%; max-width: 400px; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px; font-family: monospace; resize: vertical;"></textarea>
-        
-        <button id="btn-upload-token" style="background: #17a2b8; max-width: 400px;">Upload Semua Token ke Database</button>
-        <p id="upload-status" style="margin-top: 15px; font-weight: bold; font-size: 15px;"></p>
-    </div>
+        <div class="stat-box" style="flex-direction: column; align-items: center;">
+            <h3 style="margin-bottom: 10px; color: #333;">Upload Token Siswa</h3>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Copy-paste daftar 79 token dari Excel ke kotak di bawah ini:</p>
+            <textarea id="input-massal" rows="6" placeholder="TOKEN01&#10;TOKEN02&#10;TOKEN03..." style="width: 100%; max-width: 400px; text-align: left; font-family: monospace; resize: vertical;"></textarea>
+            <button id="btn-upload-token" style="background: #17a2b8; max-width: 400px; margin-top: 10px;">Upload Semua Token</button>
+            <p id="upload-status" style="margin-top: 15px; font-weight: bold; font-size: 15px;"></p>
+        </div>
+
+        <h3 style="color: #333; margin-bottom: 15px; margin-top: 30px;">Perolehan Suara Sementara</h3>
         <div class="chart-container">
             <canvas id="voteChart"></canvas>
         </div>
