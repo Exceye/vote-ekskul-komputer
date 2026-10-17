@@ -1,8 +1,5 @@
-// Import koneksi database dari firebase.js yang sudah kita buat
 import { db } from './firebase.js';
-// Import fungsi Firestore untuk mencari data
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
-
+import { collection, query, where, getDocs, doc, updateDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 // Mengambil elemen-elemen dari HTML
 const btnLogin = document.getElementById('btn-login');
 const loginSection = document.getElementById('login-section');
@@ -136,28 +133,30 @@ btnVoteMain.addEventListener('click', async (e) => {
     if (!yakin) return;
 
     try {
+        // Tampilkan loading
         document.querySelector('.paslon-card').innerHTML = `<h3 style="color: #007bff; padding: 40px 0;">Memproses suara... ⏳</h3>`;
         document.querySelector('.bottom-selector').classList.add('hidden');
         document.getElementById('btn-logout').classList.add('hidden');
 
-        // Simpan ke database
+        // SIMPAN SUARA KE FIRESTORE (Koleksi 'votes')
         await addDoc(collection(db, "votes"), {
             paslon: paslonPilihan,
             waktu: serverTimestamp()
         });
 
-        // Matikan token
+        // UBAH STATUS TOKEN JADI TERPAKAI
         const tokenRef = doc(db, "tokens", tokenId);
         await updateDoc(tokenRef, { isUsed: true });
 
+        // Tunggu 3 detik, lalu berhasil
         setTimeout(() => {
             alert("Terima kasih! Suaramu berhasil direkam.");
-            sessionStorage.clear();
-            window.location.reload(); 
+            sessionStorage.clear(); // Hapus sesi
+            window.location.reload(); // Refresh halaman (Auto-logout)
         }, 3000);
 
     } catch (error) {
-        console.error("Gagal mengirim suara:", error);
-        alert("Terjadi kesalahan sistem. Coba lagi.");
+        console.error("Gagal mengirim suara:", error); // Cek Inspect Element > Console jika masih error
+        alert("Terjadi kesalahan sistem. Coba cek internetmu.");
     }
 });
