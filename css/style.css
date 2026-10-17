@@ -4,8 +4,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh; /* Ubah 'height' menjadi 'min-height' agar halaman bisa di-scroll jika kepanjangan */
     margin: 0;
+    padding: 20px; /* Tambahkan padding agar kotak tidak menabrak ujung layar */
+    box-sizing: border-box;
 }
 .container {
     background-color: white;
@@ -46,7 +48,8 @@ button:hover { background-color: #218838; }
 
 /* Pengaturan untuk Logo */
 .logo {
-    width: 120px; /* Kamu bisa mengubah angka ini jika logo kurang besar/kecil */
+    width: 150px; /* Sesuaikan angka ini (misal 100px atau 120px) jika logonya masih kebesaran/kekecilan */
+    max-width: 100%;
     height: auto;
-    margin-bottom: 10px; /* Memberi jarak antara logo dan teks judul */
+    margin-bottom: 20px;
 }
